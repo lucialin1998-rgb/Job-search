@@ -25,6 +25,25 @@ DOMAIN_KEYWORDS = [
     "metadata",
 ]
 
+GLOBAL_EXCLUDE_PATTERNS = [
+    "privacy",
+    "cookie",
+    "cookies",
+    "policy",
+    "terms",
+    "legal",
+    "gdpr",
+    "sitemap",
+    "accessibility",
+    "press",
+    "news",
+    "blog",
+    "article",
+    "read full article",
+    "academy",
+    "california privacy",
+]
+
 DEFAULT_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (X11; Linux x86_64) "
@@ -90,6 +109,28 @@ def extract_job_type(text: str) -> str:
     if "contract" in lowered:
         return "contract"
     return ""
+
+
+def _any_pattern_match(text: str, patterns: list[str]) -> bool:
+    lowered = (text or "").lower()
+    return any(pattern.lower() in lowered for pattern in patterns if pattern)
+
+
+def is_job_candidate_allowed(job: Job, source: dict) -> bool:
+    combined_text = f"{job.title} {job.url}".lower()
+
+    source_exclude_patterns = source.get("exclude_patterns") or []
+    if _any_pattern_match(combined_text, GLOBAL_EXCLUDE_PATTERNS):
+        return False
+    if _any_pattern_match(combined_text, source_exclude_patterns):
+        return False
+
+    include_patterns = source.get("include_patterns")
+    if include_patterns:
+        if not _any_pattern_match(combined_text, include_patterns):
+            return False
+
+    return True
 
 
 def job_matches_keywords(job: Job, parser_type: str) -> bool:

@@ -5,10 +5,17 @@ from typing import Callable
 import requests
 import yaml
 
+from detail_fetcher import enrich_job_details
 from models import Job
 from parsers import bamboohr, generic, mbw, musicweek, workday
 from state import load_state, save_state
-from utils import dedupe_by_url, job_matches_keywords, setup_logging, write_jobs_csv
+from utils import (
+    dedupe_by_url,
+    is_job_candidate_allowed,
+    job_matches_keywords,
+    setup_logging,
+    write_jobs_csv,
+)
 
 CONFIG_PATH = "config/sources.yaml"
 OUTPUT_LATEST = "output/jobs_latest.csv"
@@ -21,8 +28,18 @@ def parse_page_only(source: dict, _session) -> list[Job]:
             base_country=source.get("default_country", ""),
             company=source.get("name", ""),
             title="",
+            base_city="",
+            posting_date="",
             channel=source.get("channel", ""),
+            category="",
+            job_type="",
+            start_date="",
+            end_date="",
+            responsibilities="",
+            hard_skills="",
+            soft_skills="",
             url=source.get("url", ""),
+            contact="",
         )
     ]
 
@@ -41,6 +58,12 @@ def load_sources(path: str = CONFIG_PATH) -> list[dict]:
     with open(path, "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f) or {}
     return cfg.get("sources", [])
+
+
+def should_fetch_details(source: dict, parser_type: str) -> bool:
+    if parser_type == "page_only":
+        return False
+    return source.get("fetch_detail", True) is not False
 
 
 def run() -> None:
@@ -71,9 +94,16 @@ def run() -> None:
                 logging.warning("Source failed: %s (%s)", source_id, exc)
                 parsed_jobs = []
 
-            fetched_count = len(parsed_jobs)
-            kept_jobs = [job for job in parsed_jobs if job_matches_keywords(job, parser_type)]
-            kept_count = len(kept_jobs)
+            fetched_candidates = len(parsed_jobs)
+            filtered_jobs = [job for job in parsed_jobs if is_job_candidate_allowed(job, source)]
+            kept_jobs = [job for job in filtered_jobs if job_matches_keywords(job, parser_type)]
+            kept_after_filter = len(kept_jobs)
+
+            details_fetched_count = 0
+            if should_fetch_details(source, parser_type):
+                for job in kept_jobs:
+                    if job.url and enrich_job_details(job, session):
+                        details_fetched_count += 1
 
             source_new = []
             for job in kept_jobs:
@@ -95,10 +125,11 @@ def run() -> None:
             all_jobs.extend(kept_jobs)
             new_jobs.extend(source_new)
             logging.info(
-                "source=%s fetched_count=%s kept_count=%s new_count=%s",
+                "source=%s fetched_candidates=%s kept_after_filter=%s details_fetched_count=%s new_count=%s",
                 source_id,
-                fetched_count,
-                kept_count,
+                fetched_candidates,
+                kept_after_filter,
+                details_fetched_count,
                 len(source_new),
             )
 

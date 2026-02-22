@@ -72,6 +72,29 @@ Supported `parser_type` values:
 
 To disable a source temporarily, comment it out with `#`.
 
+### Advanced source filtering (v1.1)
+
+In `config/sources.yaml`, each source can also define:
+
+```yaml
+include_patterns:
+  - internship
+  - assistant
+exclude_patterns:
+  - privacy
+  - policy
+fetch_detail: true
+```
+
+How it works:
+- `exclude_patterns`: if any pattern appears in title or URL, the candidate is dropped.
+- `include_patterns`: if present, at least one pattern must appear in title or URL.
+- Matching is case-insensitive substring matching.
+- There is also a built-in global exclude list for non-job pages (privacy/cookie/terms/legal/news/blog/article/etc).
+- `fetch_detail: false` disables detail-page enrichment for that source.
+
+
+
 ---
 
 ## Step 3: Enable and use GitHub Actions
@@ -129,6 +152,7 @@ Possible reason:
 What to do:
 - Re-run later.
 - Keep source enabled; retries are automatic.
+- If detail fetches are too slow for one source, set `fetch_detail: false`.
 
 ### 3) HTML changed and parser stops finding jobs
 Possible reason:
@@ -136,6 +160,8 @@ Possible reason:
 
 What to do:
 - Temporarily set `parser_type: page_only`.
+- Add `exclude_patterns` to drop bad links (privacy/policy/etc).
+- Narrow with `include_patterns` (for example `jobs`, `careers`, `intern`).
 - Later improve parser in `src/parsers/`.
 
 ### 4) No rows in `jobs_new.csv`
