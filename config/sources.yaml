@@ -1,12 +1,5 @@
 # Edit this file to add/remove job sources.
 # You can comment out any source by adding # at the beginning of lines.
-# Optional per-source keys (v1.2):
-# seniority_mode: junior_focus
-# allow_senior_if_domain_match: true
-# location_hints: ["London"]
-# include_patterns: ["intern", "assistant"]
-# exclude_patterns: ["privacy", "policy"]
-# fetch_detail: true
 sources:
   - id: beggars
     name: Beggars
@@ -14,14 +7,12 @@ sources:
     url: https://beggars.com/job-postings/
     parser_type: generic
     default_country: UK
-    notes: Indie music group careers page
 
   - id: merlin_members
     name: Merlin Members
     channel: Company Website
     url: https://merlinnetwork.org/our-members/
     parser_type: page_only
-    fetch_detail: false
     notes: Directory page, not a direct jobs feed
 
   - id: secretly_group
@@ -105,13 +96,13 @@ sources:
     parser_type: generic
     default_country: UK
 
+  # ---- Added job boards (batch 1) ----
   - id: abo_jobs
     name: ABO Jobs
     channel: Job Board
     url: https://abo.org.uk/jobs
     parser_type: generic
     default_country: UK
-    fetch_detail: true
 
   - id: soundsense_jobs
     name: SoundSense Jobs
@@ -119,7 +110,6 @@ sources:
     url: https://www.soundsense.org/jobs-and-careers
     parser_type: generic
     default_country: UK
-    fetch_detail: true
 
   - id: musicmark_jobs
     name: Music Mark Jobs
@@ -127,7 +117,6 @@ sources:
     url: https://www.musicmark.org.uk/jobs
     parser_type: generic
     default_country: UK
-    fetch_detail: true
 
   - id: thestage_jobs
     name: The Stage Jobs
@@ -135,15 +124,13 @@ sources:
     url: https://jobs.thestage.co.uk
     parser_type: generic
     default_country: UK
-    fetch_detail: true
 
-- id: rhinegold_jobs
+  - id: rhinegold_jobs
     name: Rhinegold Jobs
     channel: Job Board
     url: https://www.rhinegoldjobs.co.uk
     parser_type: generic
     default_country: UK
-    fetch_detail: true
 
   - id: musicalchairs_jobs
     name: Musical Chairs Jobs
@@ -151,4 +138,3 @@ sources:
     url: https://www.musicalchairs.info/jobs
     parser_type: generic
     default_country: UK
-    fetch_detail: true
