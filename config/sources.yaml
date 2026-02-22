@@ -96,3 +96,35 @@ sources:
     url: https://completemusicupdate.com/jobs
     parser_type: generic
     default_country: UK
+
+  - id: abo_jobs
+    name: ABO Jobs
+    channel: Job Board
+    url: https://abo.org.uk/jobs
+    parser_type: generic
+    default_country: UK
+    fetch_detail: true
+
+  - id: soundsense_jobs
+    name: SoundSense Jobs
+    channel: Job Board
+    url: https://www.soundsense.org/jobs-and-careers
+    parser_type: generic
+    default_country: UK
+    fetch_detail: true
+
+  - id: musicmark_jobs
+    name: Music Mark Jobs
+    channel: Job Board
+    url: https://www.musicmark.org.uk/jobs
+    parser_type: generic
+    default_country: UK
+    fetch_detail: true
+
+  - id: thestage_jobs
+    name: The Stage Jobs
+    channel: Job Board
+    url: https://jobs.thestage.co.uk
+    parser_type: generic
+    default_country: UK
+    fetch_detail: true
