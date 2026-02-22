@@ -17,7 +17,17 @@ PREFERRED_URL_HINTS = [
     "/apply",
 ]
 
-ROLE_KEYWORDS = ["intern", "internship", "assistant", "coordinator"]
+REJECT_URL_HINTS = [
+    "/privacy",
+    "/cookies",
+    "/policy",
+    "/terms",
+    "/news",
+    "/blog",
+    "/press",
+]
+
+ROLE_KEYWORDS = ["intern", "internship", "assistant", "coordinator", "administrator", "associate"]
 
 
 def parse_source(source: dict, session) -> list[Job]:
@@ -34,6 +44,9 @@ def parse_source(source: dict, session) -> list[Job]:
         url = absolute_url(source["url"], href)
         lowered_url = url.lower()
         lowered_title = title.lower()
+
+        if any(hint in lowered_url for hint in REJECT_URL_HINTS):
+            continue
 
         preferred_link = any(hint in lowered_url for hint in PREFERRED_URL_HINTS)
         title_has_role_keyword = any(keyword in lowered_title for keyword in ROLE_KEYWORDS)

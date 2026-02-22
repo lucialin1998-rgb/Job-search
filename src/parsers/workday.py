@@ -19,11 +19,19 @@ def parse_source(source: dict, session) -> list[Job]:
         if not title or not href:
             continue
 
+        context_text = normalize_text(a_tag.parent.get_text(" ", strip=True)) if a_tag.parent else ""
+        location_text = ""
+        if "remote" in context_text.lower():
+            location_text = "Remote"
+        elif "hybrid" in context_text.lower():
+            location_text = "Hybrid"
+
         jobs.append(
             Job(
                 base_country=source.get("default_country", ""),
                 company=source.get("name", ""),
                 title=title,
+                base_city=location_text,
                 channel=source.get("channel", ""),
                 job_type=extract_job_type(title),
                 url=absolute_url(source["url"], href),

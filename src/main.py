@@ -10,6 +10,7 @@ from models import Job
 from parsers import bamboohr, generic, mbw, musicweek, workday
 from state import load_state, save_state
 from utils import (
+    assess_seniority_relevance,
     dedupe_by_url,
     is_job_candidate_allowed,
     job_matches_keywords,
@@ -95,15 +96,47 @@ def run() -> None:
                 parsed_jobs = []
 
             fetched_candidates = len(parsed_jobs)
-            filtered_jobs = [job for job in parsed_jobs if is_job_candidate_allowed(job, source)]
-            kept_jobs = [job for job in filtered_jobs if job_matches_keywords(job, parser_type)]
-            kept_after_filter = len(kept_jobs)
-
+            dropped_as_non_job = 0
+            dropped_as_too_senior = 0
             details_fetched_count = 0
+            location_extracted_count = 0
+
+            filtered_by_patterns = [job for job in parsed_jobs if is_job_candidate_allowed(job, source)]
+            dropped_as_non_job += fetched_candidates - len(filtered_by_patterns)
+
+            keyword_jobs = [job for job in filtered_by_patterns if job_matches_keywords(job, parser_type)]
+            dropped_as_non_job += len(filtered_by_patterns) - len(keyword_jobs)
+
+            kept_jobs: list[Job] = []
+            for job in keyword_jobs:
+                keep, reason = assess_seniority_relevance(job, source)
+                if keep:
+                    kept_jobs.append(job)
+                elif reason == "too_senior":
+                    dropped_as_too_senior += 1
+                else:
+                    dropped_as_non_job += 1
+
             if should_fetch_details(source, parser_type):
+                detail_kept = []
                 for job in kept_jobs:
-                    if job.url and enrich_job_details(job, session):
+                    if not job.url:
+                        detail_kept.append(job)
+                        continue
+                    fetched, is_job_page, location_extracted = enrich_job_details(job, session, source)
+                    if fetched:
                         details_fetched_count += 1
+                    if location_extracted:
+                        location_extracted_count += 1
+                    if is_job_page:
+                        detail_kept.append(job)
+                    else:
+                        dropped_as_non_job += 1
+                kept_jobs = detail_kept
+
+            # listing-level extracted location counts too
+            location_extracted_count += sum(1 for job in kept_jobs if job.base_city)
+            kept_after_filter = len(kept_jobs)
 
             source_new = []
             for job in kept_jobs:
@@ -125,11 +158,14 @@ def run() -> None:
             all_jobs.extend(kept_jobs)
             new_jobs.extend(source_new)
             logging.info(
-                "source=%s fetched_candidates=%s kept_after_filter=%s details_fetched_count=%s new_count=%s",
+                "source=%s fetched_candidates=%s kept_after_filter=%s dropped_as_non_job=%s dropped_as_too_senior=%s details_fetched_count=%s location_extracted_count=%s new_count=%s",
                 source_id,
                 fetched_candidates,
                 kept_after_filter,
+                dropped_as_non_job,
+                dropped_as_too_senior,
                 details_fetched_count,
+                location_extracted_count,
                 len(source_new),
             )
 

@@ -22,7 +22,8 @@ It also saves dedupe state in `data/state.json`.
   - `mbw`
   - `musicweek`
   - `page_only` (fallback when parsing is hard)
-- Filters by broad keywords (role-level or domain-level)
+- Filters by role/domain rules with a junior-focus mode (v1.2)
+- Extracts Base城市 from listing/detail pages when possible (JSON-LD, labels, ATS patterns, Remote/Hybrid fallback)
 - De-duplicates by URL first, then title+company fingerprint fallback
 - Never crashes the full run because one source fails
 
@@ -92,8 +93,28 @@ How it works:
 - Matching is case-insensitive substring matching.
 - There is also a built-in global exclude list for non-job pages (privacy/cookie/terms/legal/news/blog/article/etc).
 - `fetch_detail: false` disables detail-page enrichment for that source.
+- For noisy sources, add stricter `exclude_patterns` and optionally turn off detail fetch for stability.
 
 
+
+
+### Junior focus rules (v1.2)
+
+Default mode is `seniority_mode: junior_focus` (backward-compatible if omitted).
+
+- Strong keep if title includes junior terms: intern, internship, assistant, coordinator, administrator, associate (except `Senior Associate`).
+- Senior terms (manager/senior/lead/head/director/vp/principal/chief/executive/consultant) are dropped unless domain signal is very strong (`rights/royalties/copyright/licensing/publishing/distribution/metadata`).
+- Neutral titles are kept only when domain keywords match, or when source is a pure job board (MBW/MusicWeek/CMU).
+
+Optional source fields:
+
+```yaml
+seniority_mode: junior_focus
+allow_senior_if_domain_match: true
+location_hints:
+  - London
+  - New York
+```
 
 ---
 
@@ -160,8 +181,9 @@ Possible reason:
 
 What to do:
 - Temporarily set `parser_type: page_only`.
-- Add `exclude_patterns` to drop bad links (privacy/policy/etc).
+- Add stronger `exclude_patterns` to drop bad links (privacy/policy/news/blog/press).
 - Narrow with `include_patterns` (for example `jobs`, `careers`, `intern`).
+- Set `fetch_detail: false` for that source if detail pages are noisy or blocked.
 - Later improve parser in `src/parsers/`.
 
 ### 4) No rows in `jobs_new.csv`
@@ -172,6 +194,15 @@ Possible reason:
 What to do:
 - This is normal.
 - If you want a fresh start, backup then clear `data/state.json`.
+
+### 5) Location is blank
+Possible reason:
+- Site does not expose structured location fields.
+
+What to do:
+- Keep it blank (normal for some pages).
+- Add `location_hints` in source config for common cities used by that employer.
+- Leave `fetch_detail: true` to allow extraction from job detail pages.
 
 ---
 
