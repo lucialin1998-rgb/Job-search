@@ -1,0 +1,98 @@
+# Edit this file to add/remove job sources.
+# You can comment out any source by adding # at the beginning of lines.
+sources:
+  - id: beggars
+    name: Beggars
+    channel: Company Website
+    url: https://beggars.com/job-postings/
+    parser_type: generic
+    default_country: UK
+    notes: Indie music group careers page
+
+  - id: merlin_members
+    name: Merlin Members
+    channel: Company Website
+    url: https://merlinnetwork.org/our-members/
+    parser_type: page_only
+    notes: Directory page, not a direct jobs feed
+
+  - id: secretly_group
+    name: Secretly Group
+    channel: ATS
+    url: https://sgservices.bamboohr.com/careers
+    parser_type: bamboohr
+    default_country: US
+
+  - id: domino
+    name: Domino
+    channel: Company Website
+    url: https://www.dominomusic.com/uk
+    parser_type: page_only
+    default_country: UK
+
+  - id: believe
+    name: Believe
+    channel: Company Website
+    url: https://careers.believe.com/en/
+    parser_type: generic
+
+  - id: orchard
+    name: The Orchard
+    channel: Company Website
+    url: https://www.theorchard.com/careers/openings/
+    parser_type: generic
+
+  - id: rough_trade
+    name: Rough Trade Careers
+    channel: ATS
+    url: https://careers.roughtrade.com/
+    parser_type: workday
+    default_country: UK
+
+  - id: sony_music_uk
+    name: Sony Music UK
+    channel: Company Website
+    url: https://www.sonymusic.co.uk/careers/
+    parser_type: generic
+    default_country: UK
+
+  - id: universal_temp_jobs
+    name: Universal Temp Jobs
+    channel: ATS
+    url: https://tempjobs.umusiccareers.com/browse-jobs
+    parser_type: generic
+
+  - id: kobalt
+    name: Kobalt
+    channel: Company Website
+    url: https://www.kobaltmusic.com/careers/
+    parser_type: generic
+
+  - id: mbw_jobs
+    name: Music Business Worldwide Jobs
+    channel: Job Board
+    url: https://www.musicbusinessworldwide.com/jobs/listings/
+    parser_type: mbw
+    default_country: UK
+
+  - id: musicweek_jobs
+    name: Music Week Jobs
+    channel: Job Board
+    url: https://www.musicweek.com/jobs
+    parser_type: musicweek
+    default_country: UK
+
+  - id: aim_jobs
+    name: AIM Jobs
+    channel: Job Board
+    url: https://www.aim.org.uk/#/jobs
+    parser_type: page_only
+    default_country: UK
+    notes: JS-heavy page; page_only fallback in MVP
+
+  - id: cmu_jobs
+    name: CMU Jobs
+    channel: Job Board
+    url: https://completemusicupdate.com/jobs
+    parser_type: generic
+    default_country: UK
