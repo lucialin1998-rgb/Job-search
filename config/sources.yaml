@@ -136,3 +136,19 @@ sources:
     parser_type: generic
     default_country: UK
     fetch_detail: true
+
+- id: rhinegold_jobs
+    name: Rhinegold Jobs
+    channel: Job Board
+    url: https://www.rhinegoldjobs.co.uk
+    parser_type: generic
+    default_country: UK
+    fetch_detail: true
+
+  - id: musicalchairs_jobs
+    name: Musical Chairs Jobs
+    channel: Job Board
+    url: https://www.musicalchairs.info/jobs
+    parser_type: generic
+    default_country: UK
+    fetch_detail: true
