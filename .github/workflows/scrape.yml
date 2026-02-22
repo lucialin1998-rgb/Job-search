@@ -1,0 +1,32 @@
+name: job-scraper
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1,4"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        run: python src/main.py
+
+      - name: Upload CSV artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: job-csv-output
+          path: output/*.csv
