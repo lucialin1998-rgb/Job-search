@@ -1,20 +1,22 @@
-# Edit this file to add/remove job sources.
-# You can comment out any source by adding # at the beginning of lines.
 sources:
+
   - id: beggars
     name: Beggars
     channel: Company Website
     url: https://beggars.com/job-postings/
     parser_type: generic
     default_country: UK
-    notes: Indie music group careers page
-
-  - id: merlin_members
-    name: Merlin Members
-    channel: Company Website
-    url: https://merlinnetwork.org/our-members/
-    parser_type: page_only
-    notes: Directory page, not a direct jobs feed
+    include_patterns:
+      - job
+      - apply
+      - position
+    exclude_patterns:
+      - privacy
+      - policy
+      - cookie
+      - terms
+      - legal
+      - reservation-of-rights-ai
 
   - id: secretly_group
     name: Secretly Group
@@ -23,24 +25,32 @@ sources:
     parser_type: bamboohr
     default_country: US
 
-  - id: domino
-    name: Domino
-    channel: Company Website
-    url: https://www.dominomusic.com/uk
-    parser_type: page_only
-    default_country: UK
-
   - id: believe
     name: Believe
     channel: Company Website
     url: https://careers.believe.com/en/
     parser_type: generic
+    include_patterns:
+      - job
+      - position
+      - vacancy
+    exclude_patterns:
+      - privacy
+      - cookie
+      - policy
 
   - id: orchard
     name: The Orchard
     channel: Company Website
     url: https://www.theorchard.com/careers/openings/
     parser_type: generic
+    include_patterns:
+      - opening
+      - job
+    exclude_patterns:
+      - privacy
+      - policy
+      - california
 
   - id: rough_trade
     name: Rough Trade Careers
@@ -55,6 +65,17 @@ sources:
     url: https://www.sonymusic.co.uk/careers/
     parser_type: generic
     default_country: UK
+    include_patterns:
+      - job
+      - internship
+      - assistant
+      - coordinator
+    exclude_patterns:
+      - privacy
+      - cookie
+      - policy
+      - academy
+      - read-full-article
 
   - id: universal_temp_jobs
     name: Universal Temp Jobs
@@ -67,6 +88,10 @@ sources:
     channel: Company Website
     url: https://www.kobaltmusic.com/careers/
     parser_type: generic
+    include_patterns:
+      - job
+      - position
+      - opening
 
   - id: mbw_jobs
     name: Music Business Worldwide Jobs
@@ -82,17 +107,14 @@ sources:
     parser_type: musicweek
     default_country: UK
 
-  - id: aim_jobs
-    name: AIM Jobs
-    channel: Job Board
-    url: https://www.aim.org.uk/#/jobs
-    parser_type: page_only
-    default_country: UK
-    notes: JS-heavy page; page_only fallback in MVP
-
   - id: cmu_jobs
     name: CMU Jobs
     channel: Job Board
     url: https://completemusicupdate.com/jobs
     parser_type: generic
     default_country: UK
+    include_patterns:
+      - job
+      - manager
+      - assistant
+      - coordinator
